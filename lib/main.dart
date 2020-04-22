@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:fluttercompd/http/webclient.dart';
 import 'package:fluttercompd/screens/dashboard.dart';
 
 
@@ -7,6 +8,7 @@ import 'package:fluttercompd/screens/dashboard.dart';
 
 void main() {
   runApp(BytebankApp());
+  findAll();
 }
 
 class BytebankApp extends StatelessWidget {

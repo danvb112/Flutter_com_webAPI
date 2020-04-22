@@ -1,0 +1,56 @@
+Flutter com web API
+
+-  teremos acesso a um novo pacote, o http, assim como tivemos acesso ao SKFlight.
+Esse pacote é responsável por fazer as configurações necessárias para, por exem-
+plo, fazermos a integração com uma Web API utilizando o protocolo HTTP (assim 
+como fizemos no Postman).
+
+- Para isso seguiremos o mesmo procedimento que fizemos com o skflite, começando
+pela adição da dependência. No arquivo pubspec.yaml, incluiremos o http: e cli-
+caremos em "Packages get" para realizar o download e a configuração do projeto.
+
+- Criaremos um diretório específico para realizarmos a comunicação. Na criação 
+do diretório, que será localizado na pasta "lib" do projeto, não é necessário 
+seguir um padrão exato. Utilizaremos o nome "http" para indicar que todo o códi-
+go dentro desse pacote está destinado à comunicação externa via HTTP, mas você 
+pode utilizar outro nome de sua preferência. O arquivo segue essa mesma lógica,
+e nesse caso usaremos o nome webclient.dart, muito comum em diversas aplicações 
+e que se refere justamente a um cliente responsável pela Web Para testarmos a 
+nossa integração, faremos a busca das transações, da mesma forma que fizemos no 
+Postman. Para isso, criaremos um método chamado findAll().
+
+- No corpo do método precisaremos acessar o código do http. Esse pacote nos for-
+nece algumas funções estáticas que podem ser utilizadas, como a função get(), 
+que trabalha com o verbo GET do HTTP. Além disso, a função get() exige o uso de 
+uma url representando o endereço que será acessado, e que deve ser passado via 
+string
+
+- Quando fazemos uma requisição GET, precisamos pegar o conteúdo da resposta, 
+que é justamente o Future<Response>, uma entidade do HTTP para nos devolver uma 
+resposta. Para isso, ou fazemos o then, como já vimos anteriormente, ou traba-
+lhamos com async/await. Usaremos a segunda opção, pois é a maneira mais comum e 
+sucinta de trabalhar.
+
+- Dado que temos a response, podemos fazer uma impressão para verificarmos se 
+estamos conseguindo o conteúdo esperado antes de nos comprometermos demais com 
+o nosso código. Faremos então um print(response). Executando dessa maneira, o 
+retorno muito provavelmente será na forma de um toString, que não é exatamente 
+o conteúdo que desejamos. Sendo assim, passaremos o response.body para consegui-
+rmos o corpo da requisição, onde está a lista de transações que nos interessa.
+
+- Vemos que ocorreu uma exceção informando que a conexão foi recusada e o conteú-
+do do endereço passado não pôde ser acessado. Isso aconteceu pois, no findAll(),
+estamos tentando acessar o localhost, que representa a própria máquina que está 
+executando a aplicação. Porém, a máquina que executa o aplicativo que criamos, o
+Bytebank, é o dispositivo celular, e não o computador geral. Esse é um detalhe 
+muito importante quando trabalhamos com comunicação externa, principalmente 
+quando o servidor (a Web API) está no nosso computador.
+
+- Dado que temos essa peculiaridade, como faremos para acessar nosso servidor? 
+Existem algumas técnicas para isso. Dentre elas, considerando que tanto o compu-
+tador quanto o emulador estão na mesma rede, podemos pegar o endereço IP dessa 
+rede, algo que podemos conseguir por meio do Prompt de Comando.
+
+- Voltaremos ao arquivo webclient.dart e substituiremos a URL com o endereço IP 
+da rede
+
