@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttercompd/components/progress.dart';
 import 'package:fluttercompd/dao/contacts_dao.dart';
 import 'package:fluttercompd/models/contact.dart';
+import 'package:fluttercompd/screens/transaction_form.dart';
 
 import 'contact_form.dart';
 
@@ -40,7 +41,9 @@ class ContactsList extends StatelessWidget {
               return ListView.builder(
               itemBuilder: (context, index) {
                 final Contact contact = contacts[index];
-                return _ContactItem(contact);
+                return _ContactItem(contact, onClick: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => TransactionForm(contact)));
+                });
               },
               itemCount: contacts.length,
             );   
@@ -71,13 +74,15 @@ class ContactsList extends StatelessWidget {
 
 class _ContactItem extends StatelessWidget {
   final Contact contact;
+  final Function onClick;
 
-  _ContactItem(this.contact);
+  _ContactItem(this.contact, {@required this.onClick});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        onTap: () => onClick(),
         title: Text(
           contact.name,
           style: TextStyle(
