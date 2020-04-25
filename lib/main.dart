@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:fluttercompd/http/webclient.dart';
 import 'package:fluttercompd/screens/dashboard.dart';
 
+import 'models/contact.dart';
+import 'models/transaction.dart';
+
 
 
 
 void main() {
   runApp(BytebankApp());
-  findAll();
+  save(Transaction(200.0, Contact(0, 'Gui', 2000))).then((transaction) => (transaction));
 }
 
 class BytebankApp extends StatelessWidget {
@@ -27,3 +30,4 @@ class BytebankApp extends StatelessWidget {
     );
   }
 }
+

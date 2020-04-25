@@ -54,3 +54,147 @@ rede, algo que podemos conseguir por meio do Prompt de Comando.
 - Voltaremos ao arquivo webclient.dart e substituiremos a URL com o endereço IP 
 da rede
 
+- Quando fazemos uma implementação que envolve comunicação externa, no caso HTTP
+esse tipo de feedback faz toda a diferença para entendermos se o caminho que es-
+tamos trilhando nessa comunicação faz sentido com o fluxo esperado.
+
+- Dada essa necessidade, aprenderemos uma técnica que permite um feedback que 
+nos traga informações mais precisas em relação a essa comunicação. Para isso, 
+usaremos um componente que atua como interceptador do HTTP, ou seja, basicamente
+ um componente que fica atento a qualquer requisição ou resposta que ocorre a 
+partir desse protocolo. Dessa forma, se mandarmos uma requisição para a Web API 
+ou se recebermos uma resposta dessa requisição, o interceptador saberá, e assim 
+poderemos trabalhar em cima dessa interceptação.
+
+- Nosso objetivo, no momento, é guardarmos essas informações para descobrirmos 
+qual foi o endereço da requisição, o conteúdo e os headers enviados, entre ou-
+tros detalhes. Quando tivermos uma resposta, além de guardar esse tipo de forma-
+ção, também queremos obter o status code (por exemplo o 200 do HTTP, que indica 
+que tudo ocorreu corretamente, ou o 500), e assim por diante.
+
+- Incluiremos a linha http_interceptor: no arquivo pubspec.yaml e clicaremos em 
+"Packages get" para instalarmos e configurarmos no projeto o novo pacote.
+
+- Dentre essas "implementações comuns", temos o próprio logging, ou seja, a 
+responsabilidade de guardar as informações do que aconteceu durante a comunica-
+ção HTTP. Encontraremos, inclusive, um código pronto para isso
+
+- Vamos copiar esse código e incluí-lo, por enquanto, no nosso webclient.dart, 
+fazendo as importações necessárias. Repare que, para utilizarmos a classe 
+LoggingInterceptor, é necessário implementar a interface InterceptorContract do 
+Dart. Se você quiser utilizar outro interceptador de sua preferência, também 
+terá que implementar essa interface.
+
+- Nos é exigida a implementação (ou a sobrescrita) de dois métodos, 
+interceptRequest() e interceptResponse(). Todo tipo de requisição chamará o 
+método interceptRequest() que, a princípio, está imprimindo o RequestData, ou 
+seja, os dados que vêm da requisição. Já o interceptResponse é executado sempre 
+que recebemos uma resposta, imprimindo o ResponseData.
+
+- Agora que já declaramos o interceptador no nosso código, precisamos utilizá-lo
+propriamente. A documentação do http_interceptor mostra um exemplo de como fazer
+isso a partir de um Client, mas também podemos fazê-lo manualmente. Voltaremos 
+então ao nosso código e, antes de chamarmos o get(), criaremos uma entidade Client que também terá acesso a esse método.
+
+- Criaremos esse cliente a partir de uma referência HttpClientWithInterceptor. 
+Nela, teremos o método de construção build(), com o qual é possível adicionar 
+interceptadores (interceptors) em uma lista. Na documentação, a lista é adicio-
+nada via colchetes (ao invés de ser criada uma lista anterior), e faremos o 
+mesmo no nosso código. Na lista, incluiremos as instâncias dos interceptadores 
+que queremos adicionar - nesse caso, somente o LoggingInterceptor.
+
+- Com isso teremos um cliente para ser utilizado com o nosso interceptador. Para
+utilizá-lo, atribuiremos o retorno a um objeto client (do tipo Client) e, ao 
+invés de chamarmos apenas o método get(), o chamaremos a partir desse objeto 
+com client.get().
+
+- Se quisermos saber, por exemplo, o endereço que foi usado para a requisição, 
+podemos pedir data.url. Se quisermos os headers enviados na requisição, podemos
+adicionar um novo print() pedindo a informação data.headers. Da mesma forma, se 
+quisermos o corpo da requisição, podemos pedir data.body, e assim por diante. 
+Para que nosso retorno fique mais claro, faz todo sentido utilizarmos um 
+template string para identificar o que cada impressão significa.
+
+- A ideia é convertermos esse conteúdo no formato JSON para um objeto que faça 
+mais sentido para nós, que seria uma lista de transferências.
+
+- O response.body, que utilizamos anteriormente para obter o conteúdo da resposta,
+trata-se justamente de uma referência de string. Sendo assim, a princípio, não 
+conseguiremos mandar esse conteúdo como uma lista de transferências, sendo 
+necessário fazermos uma conversão. É justamente isso que iremos aprender.
+
+- Para fazer essa conversão, primeiro precisaremos pegar o objeto JSON e convertê-
+lo para um objeto do Dart. O Dart nos disponibiliza um pacote de conversão 
+(dart:convert) que nos possibilita tanto passar uma string em JSON para um obje-
+to Dart (jsonDecode()) quanto para passar um objeto Dart para uma string JSON 
+(jsonEncode()).
+
+- O Visibility() é um componente que permite configurar se outro widget será 
+visível ou não. Assim, o Icon(), por exemplo, será uma espécie de widget opcio-
+nal.
+
+- A ideia agora é tentarmos acessar um serviço indisponível, o que pode ser 
+feito utilizando um endereço IP inválido. Ao entrarmos em "Transaction Feed", a 
+tela de "Loading" será exibida infinitamente. Isso acontece pois a forma que 
+fazemos essa operação assíncrona, que é a partir do future, não tem uma regra de
+timeout, ou seja, de "tempo excedido", algo muito comum em operações do tipo.
+
+- Porém, precisamos ficar atentos a esse cenário, pois o aplicativo não pode 
+ficar carregando e consumindo dados e processamento do usuário por um período 
+indeterminado.
+
+- Para solucionarmos esse problema, adicionaremos um timeout() após a execução 
+do client.get() e estabeleceremos uma duração de 5 segundos (Duration(seconds: 5)). 
+Diferentes bibliotecas utilizam períodos de tempo, como 3, 5 ou 15 segundos.
+
+- usaremos client.post() para obtermos o feedback necessário. Agora podemos adi-
+cionar as informações ao POST. A primeira informação, que é obrigatória, é o en-
+dereço da requisição. Dado que esse endereço será o mesmo da requisição GET, po-
+demos extraí-lo para uma constante baseUrl do tipo String e utilizá-la nos pon-
+tos referenciados.
+
+- Perceba que temos os headers, que são justamente os cabeçalhos que tivemos que
+mandar no Postman, seja o content-type de JSON ou o password, que é a senha para
+realizar a transação. Além disso, temos o body, que é o conteúdo que precisa-
+remos mandar na transferência.
+
+- Para enviarmos os headers, teremos que passar um mapa no qual tanto as chaves 
+quanto os valores serão strings. Uma maneira fácil e objetiva de declararmos 
+esse mapa é por meio das chaves ({}). Assim, não precisaremos declarar o nome 
+Map.
+
+- Computaremos os valores adicionando primeiro a chave, por exemplo 
+'Content-type', seguida do seu valor, nesse caso 'application/json'.
+
+- Passados os cabeçalhos, adicionaremos também o body contendo os valores da 
+transação. Esse atributo espera valores do tipo dynamic, mas precisaremos tomar
+cuidado nesse ponto.
+
+- Isso porque podemos, por exemplo, enviar uma transaction. Porém, a requisição 
+de POST espera uma estrutura de JSON, o que irá requerer um conversor - da mesma
+maneira que pegamos um valor mapeado do servidor e usamos um conversor para 
+transformá-lo em um objeto em Dart.
+
+- Sendo assim, antes de enviarmos a transaction, usaremos o jsonEncode() para 
+realizarmos essa conversão.
+
+- Entretanto, antes da conversão, precisaremos transformar a transação em um 
+objeto genérico (um mapa com chave do tipo String e valor dinâmico), da mesma 
+maneira como utilizamos as informações do banco de dados. Na criação desse 
+objeto, podemos declarar uma referência de Map ou simplesmente usar a mesma 
+estrutura aplicada nos headers, que é bem mais objetiva.
+
+- No corpo, mandaremos o value recebendo transaction.value e, em seguida, a 
+estrutura do nosso contact. Como esse é um objeto dentro do JSON, abriremos uma 
+nova estrutura de chaves ({}) na qual incluiremos as chaves name e accountNumber
+ e seus respectivos valores transaction.contact.name e 
+transaction.contact.accountNumber.
+
+- Enviaremos esse transactionMap para o jsonEncode() que, por sua vez, devolverá
+uma string representando o JSON esperado no body. Chamaremos essa string de 
+transactionJson e finalmente a passaremos no body do nosso post().
+
+- 
+
+
+

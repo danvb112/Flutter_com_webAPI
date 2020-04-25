@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercompd/screens/contacts_list.dart';
 import 'package:fluttercompd/screens/transactions_list.dart';
-import 'package:path/path.dart';
+
 
 class Dashboard extends StatelessWidget {
   static const String _titleAppBar = 'Dashboard';
@@ -24,8 +24,7 @@ class Dashboard extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 _FeatureItem('Transfer', Icons.monetization_on, onCLick: () => _showContactsList(context)),
-                _FeatureItem('Transaction feed', Icons.description, onCLick: () => _showTransactionFeed(context),),
-                _FeatureItem('Teste', Icons.ac_unit)
+                _FeatureItem('Transaction feed', Icons.description, onCLick: () => _showTransactionFeed(context),)
               ],
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercompd/components/progress.dart';
 import 'package:fluttercompd/dao/contacts_dao.dart';
 import 'package:fluttercompd/models/contact.dart';
 
@@ -28,16 +29,7 @@ class ContactsList extends StatelessWidget {
                 break;
 
               case ConnectionState.waiting:
-                return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(),
-                  Text(_textLoading)
-                ],
-              ),
-            );
+                return Progress();
                 break;
 
               case ConnectionState.active:
