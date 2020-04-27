@@ -194,7 +194,61 @@ transaction.contact.accountNumber.
 uma string representando o JSON esperado no body. Chamaremos essa string de 
 transactionJson e finalmente a passaremos no body do nosso post().
 
-- 
+- Perceba que tais conversores, tanto para lista, transferência, mapa ou JSON, 
+possuem uma certa complexidade, mesmo tratando de objetos bastante simples. Além
+disso, é cada vez mais comuns fazermos esse tipo de conversão em objetos mais 
+complicados. Se mantivermos o código dessa forma, teremos uma experiência ruim 
+no desenvolvimento do projeto e dificultaremos a sua manutenção.
+
+- Aproveitaremos esse momento para conhecermos outra técnica relacionada ao 
+conversor do Dart. Para isso, teremos como auxílio a própria documentação do 
+Flutter, mais especificamente a página JSON and serialization.
+
+- Esse documento bastante extenso trata da serialização de um objeto JSON, algo 
+muito comum quando fazemos comunicações externas por meio de uma Web API. Isso 
+é importante pois existem diferentes maneiras de lidar com JSON a depender do 
+ambiente, como Android ou iOS, seja utilizando uma biblioteca ou escrevendo o 
+código manualmente.
+
+- Logo de cara é mostrado o processo que utilizamos na primeira implementação, 
+ou seja, utilizando o jsonDecode() para converter um mapa. Em seguida são 
+citados alguns possíveis problemas, como o fato dessa implementação ser 
+propensa a erros, por exemplo se não inicializarmos todos os valores de um 
+objeto ou se digitarmos algum valor ou referência incorretamente.
+
+- Dado que tais erros são muito comuns, existe outra abordagem, que é fazer a 
+conversão dentro do próprio objeto. Isso nos fornece alguns recursos auxiliares,
+como o próprio compilador ajudando a preencher todos os atributos. Dessa maneira, 
+as chances de erro são bem menores.
+
+- Para usarmos tal abordagem teremos que implementar dois comportamentos nos 
+nossos modelos: o fromJson(), que pega um json via parâmetro e o converte para 
+um objeto; e o toJson(), que pega o objeto e devolve um mapa.
+
+- No IntelliJ, acessaremos a classe Transaction para começarmos a implementação 
+da lógica que converte um JSON para nossa transação. Incluiremos nela um 
+Transaction.fromJson() indicando que o valor recebido será um Map<String, 
+dynamic>.
+
+- Para criarmos uma transferência a partir desse método, precisamos incluir os 
+dois pontos (:) e inicializar cada um dos atributos. Nessa abordagem, somos 
+obrigados a colocar todos os atributos durante a inicialização - nesse caso 
+value, recebido de json['value'], e contact, recebido de json['contact'].
+
+- O problema dessa construção é que estamos colocando um objeto do Dart como se 
+fosse um mapa de String e valor dinâmico. Nesse tipo de abordagem, podemos 
+criar um novo conversor a partir do novo objeto. Nesse caso, utilizaremos o
+fromJson no nosso contato (Contact).
+
+- Adicionaremos os dois pontos (:) e, no corpo do método, preencheremos os 
+campos esperados: id, vindo de json['id'], name, de json['name'] e 
+accountNumber, de json['accountNumber']. Note que, a princípio, estamos 
+utilizando o valor json['id']. Dessa forma, o id será preenchido com um valor 
+nulo e poderá, futuramente, ser sobrescrito. Da mesma forma, se você preferir, 
+pode atribuir o valor 0 a esse ID.
+
+
+
 
 
 

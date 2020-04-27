@@ -16,7 +16,7 @@ class Progress extends StatelessWidget {
                   Text(_textLoading)
                 ],
               ),
-            );;
+            );
   }
 
 }

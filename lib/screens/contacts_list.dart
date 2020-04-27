@@ -9,7 +9,6 @@ import 'contact_form.dart';
 class ContactsList extends StatelessWidget {
 
   static const String _titleAppBar = 'Transfer';
-  static const String _textLoading = 'Loading';
   static const String _textErro = 'Unknow error';
 
   final ContactDao _dao = ContactDao();
