@@ -247,6 +247,75 @@ utilizando o valor json['id']. Dessa forma, o id será preenchido com um valor
 nulo e poderá, futuramente, ser sobrescrito. Da mesma forma, se você preferir, 
 pode atribuir o valor 0 a esse ID.
 
+- Para exibir um Dialog no flutter é preciso chamar uma função que apresente esse
+componente sendo esta a 'showDialog()' que receberá um contexto e um builder, 
+que seria o responsável para apresentar a informação. No builder, teremos uma 
+funçãio que recebe um BuildContext e retorna um widget e é justamente este retor-
+no que deveremos apresentar o Dialog.
+
+- Para coletarmos a senha no dialog, lançaremos mão da mesma técnica utilizada 
+nos featuredItem, isto é, usaremos um callback indicando que algo foi clicado. 
+Ainda em TransactionAuthDialog, criaremos uma função chamada onConfirm. Dado que
+iremos enviar uma informação, modificaremos o tipo dessa Function para que ela 
+receba como valor uma String. Em seguida, receberemos essa função pelo 
+construtor TransactionAuthDialog(). Precisaremos de um controlador de modo a 
+recuperarmos a informação no campo de texto, algo que só será possível com um
+StatefulWidget.
+
+- Percebemos que alguns problemas podem acontecer no envio de transferências 
+para a Web API, como a senha estar incorreta ou o valor da transferência ser 
+inadequado. Cada um desses problemas exige um cuidado especial para que o 
+usuário tenha informações precisas e saiba como proceder. Considerando essa 
+necessidade, entenderemos como é possível identificar a ocorrência desses erros 
+e como atuar sobre eles.
+
+- Sabemos que o envio das informações para a Web API é feita por meio do save(),
+e é a partir desse momento que precisaremos, de alguma maneira, identificar os 
+problemas. Por nossa sorte, o Dart nos disponibiliza um método que faz a 
+captura desses erros. Atualmente utilizamos o then para obter a resposta do 
+Future, mas também é possível, depois disso, executar outros comportamentos do 
+Future.
+
+- Como nosso objetivo é capturar erros, utilizaremos o método catchError(), que 
+a principio espera como argumento obrigatório a implementação de uma função 
+onError.
+
+- Para conseguirmos atuar no catchError() precisaremos ter a capacidade de 
+enviar um erro específico e trabalhar com ele. Existem diversas maneiras de se 
+lidar com erros, portanto não é interessante lidar com eles de maneira genérica.
+Neste caso, é interessante considerarmos as exceptions que são lançadas na 
+execução do Future e que podem ser capturadas pelo catchError().
+
+- Ao lidarmos com o catchError(), podemos recebemos qualquer tipo de informação 
+(e) - nesse caso um dynamic, mas poderia ser uma exception, uma string ou outro 
+tipo. Sendo assim, essa implementação não garante qual é o tipo recebido. 
+Entretanto, o FailureDialog() espera uma string, e nós enviamos uma _Exception, 
+que é a implementação padrão da Exception. Essa implementação possui alguns 
+conteúdos, como o message, que é justamente a mensagem que nos é apresentada. 
+Como esse é um valor dinâmico, conseguiremos acessá-lo com e.message.
+
+- Da mesma forma, se colocarmos um valor mas errarmos a senha, a mensagem 
+"authentication failed" aparecerá na tela. Ainda assim, não temos garantia de
+que tudo vai operar da maneira esperada. A forma que implementamos não nos 
+garante nenhuma segurança dos tipos que recebemos no catchError(), inclusive uma
+Transaction. Ainda que esse cenário seja impraticável no dia-a-dia, vamos 
+simulá-lo lançando uma Transaction na execução do save().
+
+- Ao tentarmos enviar uma transferência pelo aplicativo, receberemos um erro 
+informando que a classe Transaction não possui o atributo message. Voltando ao
+TransctionForm, no momento em que utilizamos o catchError(), teremos acesso a 
+uma propriedade: test, que será o responsável por fazer uma comparação booleana
+e verificar se o tipo que recebemos condiz com o esperado. Para isso, 
+implementaremos uma função enviando como parâmetro o valor e recebido, que a 
+princípio é um dynamic, e devolvendo uma expressão booleana e is Exception. 
+Dessa vez não teremos nenhuma mensagem de erro na tela, pois o catchError() só 
+será executado quando identificar que e realmente se trata de uma Exception. 
+Assim, não acessaremos uma propriedade que não existe naquela referência.
+
+- 
+
+
+
 
 
 

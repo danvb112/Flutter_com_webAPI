@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercompd/components/response_dialog.dart';
+import 'package:fluttercompd/components/transaction_auth_dialog.dart';
 import 'package:fluttercompd/http/webclients/transactions_webclient.dart';
 import 'package:fluttercompd/models/contact.dart';
 import 'package:fluttercompd/models/transaction.dart';
@@ -64,11 +66,15 @@ class _TransactionFormState extends State<TransactionForm> {
                           double.tryParse(_valueController.text);
                       final transactionCreated =
                           Transaction(value, widget.contact);
-                      _webClient.save(transactionCreated).then((transaction) {
-                        if (transaction != null) {
-                          Navigator.pop(context);
-                        }
-                      });
+                      showDialog(
+                          context: context,
+                          builder: (contextDialog) {
+                            return TransactionAuthDialog(
+                              onConfirm: (String password) {
+                                _save(transactionCreated, password, context);
+                              },
+                            );
+                          });
                     },
                   ),
                 ),
@@ -78,5 +84,24 @@ class _TransactionFormState extends State<TransactionForm> {
         ),
       ),
     );
+  }
+
+  void _save(Transaction transactionCreated, String password,
+      BuildContext context) async {
+        final Transaction transaction = await _webClient.save(transactionCreated, password).catchError((e) {
+          showDialog(
+            context: context,
+            builder: (contextDialog) {
+             return FailureDialog(e.message);
+          });
+    }, test: (e) => e is Exception);
+
+    if (transaction != null) {
+        await showDialog(context: context, builder: (contextDialog){
+          return SuccessDialog('Sucess Transaction');
+        });
+        Navigator.pop(context);
+        
+      }
   }
 }
