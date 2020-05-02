@@ -312,6 +312,50 @@ Dessa vez não teremos nenhuma mensagem de erro na tela, pois o catchError() só
 será executado quando identificar que e realmente se trata de uma Exception. 
 Assim, não acessaremos uma propriedade que não existe naquela referência.
 
+- Em TransactionWebClient, já temos um timeout() na chamada do get(). Entretanto,
+pode ser que precisemos configurá-lo para diversos outros comportamentos, e 
+fazer isso individualmente tornaria a manutenção mais trabalhosa. Portanto, 
+configuraremos um timeout padrão que servirá para todos os comportamentos do 
+TransactionWebClient.
+
+- Considerando que todos esses comportamentos utilizam um client como referência
+básica para fazer as chamadas, vamos utilizá-lo para essa configuração. No 
+webclient.dart, além de mandarmos os interceptors, teremos acesso ao argumento 
+resquestTimeout, que servirá como padrão para todas as chamadas que precisarem 
+dele. Nesse caso, adicionaremos um Duration com o valor seconds: 5.
+
+- Devemos nos lembrar que a adição de um timeout é uma abordagem recomendada, 
+dado que realizar execuções por tempo indeterminado não faz sentido, já que o 
+aplicativo consumirá cada vez mais recursos do usuário. Agora que fizemos essa 
+implementação, modificaremos o endereço de baseUrl para simularmos um timeout 
+na aplicação.
+
+- Perceba que, no código do nosso formulário, só estamos capturando uma 
+Exception genérica. Entretanto, faz sentido recebermos erros específicos de 
+modo a enviarmos uma mensagem ou mesmo executarmos uma ação personalizada. Para
+isso, temos a capacidade de adicionar chamadas encadeadas do método catchError()
+Na nova chamada, faremos a mesma implementação que já conhecemos, com a 
+diferença de que mandaremos uma TimeoutException.
+
+- Executaremos a aplicação e faremos e repetiremos a simulação do erro. 
+Entretanto, mesmo após as modificações, a tela apresentará a mensagem "Future 
+not completed". Isso acontece pois em chamadas encadeadas o primeiro 
+catchError() é executado e, somente após a finalização, o próximo também o será.
+O problema é que a primeira chamada é tão genérica que ela também é compatível 
+com o TimeoutException.
+
+Sendo assim, devemos tomar cuidado e verificar se estamos capturando um erro 
+genérico o suficiente para sobrescrever a captura de outros erros. Uma solução 
+possível é alterarmos a ordem das chamadas de catchError(), do mais específico 
+para o mais genérico.
+
+- A segunda abordagem é evitar capturas genéricas. Por exemplo, poderíamos criar,
+em TransactionWebClient, uma exceção personalizada para HTTP. Sendo assim, 
+criaremos uma classe chamada HttpException que realiza a implementação de 
+Exception. Durante a implementação, faremos uma configuração bastante similar a
+do próprio TimeoutExcetion, recebendo uma message do tipo String e a colocando 
+no construtor.
+
 - 
 
 
