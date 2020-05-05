@@ -356,6 +356,8 @@ Exception. Durante a implementação, faremos uma configuração bastante simila
 do próprio TimeoutExcetion, recebendo uma message do tipo String e a colocando 
 no construtor.
 
+- usando uma referência uuid, que é uma instância da classe Uuid, a partir da qual chamaremos diferentes funções, como v1() e v4(). Essas funções dizem respeito à versão do UUID, isto é, o algorítimo usado para gerar esses identificadores únicos.
+
 - 
 
 
